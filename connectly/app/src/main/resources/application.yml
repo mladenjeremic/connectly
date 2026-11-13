@@ -1,0 +1,38 @@
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: framework   # iza Render/Fly/nginx proxy-ja
+  compression:
+    enabled: true
+
+spring:
+  datasource:
+    url: ${DB_URL:jdbc:mysql://localhost:3306/connectly}
+    username: ${DB_USERNAME:connectly}
+    password: ${DB_PASSWORD:connectly}
+  jpa:
+    hibernate.ddl-auto: ${DDL_AUTO:update}   # kasnije Flyway; u produkciji može 'validate'
+    open-in-view: false
+  servlet:
+    multipart:
+      max-file-size: 5MB          # jedna fotografija
+      max-request-size: 55MB      # do 10 fotografija + tekst
+
+connectly:
+  jwt:
+    secret: ${JWT_SECRET:change-me-change-me-change-me-change-me-1234}
+    ttl-minutes: ${JWT_TTL_MINUTES:720}
+  storage:
+    type: ${STORAGE_TYPE:local}     # local = folder na disku, database = slike u bazi (za hosting bez trajnog diska)
+  upload:
+    dir: ${UPLOAD_DIR:uploads}
+  static-dir: ${STATIC_DIR:}        # ako je zadat, backend servira build frontenda (jedan servis)
+  cors:
+    allowed-origins: ${CORS_ORIGINS:http://localhost:5173}
+  ban-expiry-check-ms: 60000
+  demo:
+    seed: ${DEMO_SEED:false}         # DEMO_SEED=true ubacuje ~25 demo korisnika sa objavama (jednom)
+    password: ${DEMO_PASSWORD:Demo12345!}
+  admin:                         # seed administratora; ostavi email prazan da isključiš
+    email: ${ADMIN_EMAIL:admin@connectly.local}
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD:Admin12345!}

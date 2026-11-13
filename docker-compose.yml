@@ -1,0 +1,29 @@
+# Cela aplikacija lokalno (baza + API + frontend):  docker compose up --build   ->  http://localhost:8080
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: connectly
+      POSTGRES_USER: connectly
+      POSTGRES_PASSWORD: connectly
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U connectly"]
+      interval: 5s
+      retries: 10
+  app:
+    build: .
+    depends_on:
+      db: { condition: service_healthy }
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/connectly
+      DB_USERNAME: connectly
+      DB_PASSWORD: connectly
+      JWT_SECRET: promeni-me-promeni-me-promeni-me-promeni-me-1234
+      STORAGE_TYPE: database
+    # (ako koristiš volumen za /app/uploads, možeš ostaviti STORAGE_TYPE=local)
+volumes:
+  db-data:
